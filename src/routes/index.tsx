@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SlideDeck, SlideView } from "../components/SlideDeck";
+import { SlideView } from "../components/SlideDeck";
 import { SlideNavigator } from "../components/SlideNavigator";
 
 export const Route = createFileRoute("/")({
