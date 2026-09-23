@@ -38,7 +38,7 @@ export function RoundRobinRing() {
   return <div className="rr-wrap" role="img" aria-label="Anillo Round Robin con cuatro procesos"><div className="rr-ring">{["P1","P2","P3","P4"].map((p,i)=><div key={p} className={`rr-sector rr-${i}`}>{p}</div>)}<div className="rr-core"><Clock3/><span>q = 2</span></div><motion.div className="rr-pointer" animate={reduce?{}:{rotate:360}} transition={{duration:8,repeat:Infinity,ease:"linear"}}><span/></motion.div></div></div>;
 }
 
-const flowIcons=[Zap,Save,Settings,Undo2,Play];
+const flowIcons=[Zap,Save,Settings,Undo2,Play] as const;
 export function InterruptFlow(){return <div className="interrupt-flow" role="img" aria-label="Cinco pasos del flujo de una interrupción">{["Señal","Guardar contexto","Ejecutar ISR","Restaurar contexto","Continuar"].map((label,i)=>{const Icon=flowIcons[i];return <div className={`flow-step ${i>0&&i<4?"flow-active":""}`} key={label}><motion.div animate={i>0&&i<4?{boxShadow:["0 0 0 var(--cyan-soft)","0 0 30px var(--cyan-soft)","0 0 0 var(--cyan-soft)"]}:{}} transition={{duration:2,repeat:Infinity,delay:i*.3}}><Icon/></motion.div><b>0{i+1}</b><span>{label}</span>{i<4&&<i>→</i>}</div>})}</div>}
 
 export function ModuleVenn(){const reduce=useReducedMotion();return <div className="venn" role="img" aria-label="Gestión de CPU e interrupciones conectadas por el temporizador"><div className="venn-circle venn-cpu"><Cpu/><strong>Gestión<br/>de CPU</strong></div><div className="venn-circle venn-int"><Zap/><strong>Interrupciones</strong></div><motion.div className="venn-center" animate={reduce?{}:{scale:[1,1.12,1]}} transition={{duration:2,repeat:Infinity}}><Timer/><span>Temporizador</span></motion.div></div>}
