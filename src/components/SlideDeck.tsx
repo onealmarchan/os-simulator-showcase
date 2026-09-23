@@ -26,6 +26,7 @@ function SlideView({index}:{index:number}) { const s=slides[index]; if(!s)return
     case 15:return <div className="split mock-layout"><BulletList bullets={s.bullets??[]}/><Module4Mock/></div>;
     case 16:return <div className="split"><BulletList bullets={s.bullets??[]}/><ModuleVenn/></div>;
     case 17:return <div className="closing"><div className="closing-points">{s.bullets?.map((b,i)=><motion.div key={b} initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{delay:.35+i*.18}}><span><Check/></span><p>{b}</p></motion.div>)}</div><div className="thanks"><CpuChip compact/><h2>¡Gracias!</h2><p>¿Preguntas?</p><small>[Nombre] · [Correo o contacto]</small></div></div>;
+    default:return null;
   }})(); return <SlideShell slide={s} className={s.id===1?"cover-slide":s.id===17?"closing-slide":""}>{body}</SlideShell> }
 export function SlideDeck(){return <>{slides.map((_,i)=><div key={i} style={{display:"contents"}}>{false&&<SlideView index={i}/>}</div>)}</>}
 export {SlideView};
