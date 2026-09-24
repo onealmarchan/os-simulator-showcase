@@ -1,6 +1,6 @@
-import { BarChart3, Check, CircleAlert, Clock3, Code2, Cpu, HardDrive, Keyboard, MousePointerClick, Play, Save, Settings, Terminal, Timer, Zap } from "lucide-react";
-import { motion } from "framer-motion";
-import { agenda, metricRows, slides } from "../slides/slides";
+import { BarChart3, Check, CircleAlert, Code2, Cpu, HardDrive, Keyboard, MousePointerClick, Terminal, Timer, Users, Zap } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { agenda, metricRows, slides, type CoverContent, type CoverGroup } from "../slides/slides";
 import { BulletList, SlideShell } from "./SlideShell";
 import { CpuChip, Gantt, InterruptFlow, InterruptTypes, ModuleVenn, ProcessQueue, ProcessStates, RoundRobinRing } from "./diagrams/Diagrams";
 
@@ -9,7 +9,7 @@ const Card=({children,className=""}:{children:React.ReactNode;className?:string}
 
 function SlideView({index}:{index:number}) { const s=slides[index]; if(!s)return null;
   const body=(()=>{switch(s.id){
-    case 1:return <div className="cover-grid"><div className="cover-copy"><div className="cover-rule"/><p className="cover-label">PRESENTACIÓN ACADÉMICA · 2026</p><div className="student-data"><span>[Nombre del estudiante]</span><span>[Asignatura]</span><span>[Universidad]</span><span>[Fecha]</span></div></div><CpuChip/></div>;
+    case 1:return s.cover?<CoverLayout cover={s.cover}/>:null;
     case 2:return <div className="agenda-grid">{agenda.map(([title,desc],i)=>{const Icon=agendaIcons[i]??Cpu;return <Card key={title}><span className="agenda-number">0{i+1}</span><Icon/><h3>{title}</h3><p>{desc}</p></Card>})}</div>;
     case 3:return <div className="split"><BulletList bullets={s.bullets??[]}/><ProcessQueue/></div>;
     case 4:return <ProcessStates/>;
@@ -25,11 +25,25 @@ function SlideView({index}:{index:number}) { const s=slides[index]; if(!s)return
     case 14:return <div className="event-grid"><EventCard icon={<HardDrive/>} title="E/S completada" text="Un dispositivo termina y el proceso bloqueado vuelve a estar listo." from="Bloqueado" to="Listo"/><EventCard icon={<Timer/>} title="Temporizador" text="El reloj marca el fin del quantum y la CPU cambia de proceso." from="Ejecutando" to="Listo"/></div>;
     case 15:return <div className="split mock-layout"><BulletList bullets={s.bullets??[]}/><Module4Mock/></div>;
     case 16:return <div className="split"><BulletList bullets={s.bullets??[]}/><ModuleVenn/></div>;
-    case 17:return <div className="closing"><div className="closing-points">{s.bullets?.map((b,i)=><motion.div key={b} initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{delay:.35+i*.18}}><span><Check/></span><p>{b}</p></motion.div>)}</div><div className="thanks"><CpuChip compact/><h2>¡Gracias!</h2><p>¿Preguntas?</p><small>[Nombre] · [Correo o contacto]</small></div></div>;
+    case 17:return <div className="closing"><div className="closing-points">{s.bullets?.map((b,i)=><motion.div key={b} initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{delay:.35+i*.18}}><span><Check/></span><p>{b}</p></motion.div>)}</div><div className="thanks"><CpuChip compact/><h2>¡Gracias!</h2><p>¿Preguntas?</p></div></div>;
     default:return null;
   }})(); return <SlideShell slide={s} className={s.id===1?"cover-slide":s.id===17?"closing-slide":""}>{body}</SlideShell> }
 export function SlideDeck(){return <>{slides.map((_,i)=><div key={i} style={{display:"contents"}}>{false&&<SlideView index={i}/>}</div>)}</>}
 export {SlideView};
+
+function CoverLayout({cover}:{cover:CoverContent}){
+  const reduceMotion=useReducedMotion();
+  return <div className="cover-grid"><div className="cover-copy"><div className="cover-rule"/><p className="cover-label">PRESENTACIÓN ACADÉMICA · 2026</p><div className="cover-groups">{cover.groups.map((group,index)=><GroupCard key={group.id} group={group} index={index} reduceMotion={Boolean(reduceMotion)}/>)}</div><InstitutionalInfo cover={cover} reduceMotion={Boolean(reduceMotion)}/></div><CpuChip/></div>
+}
+
+function GroupCard({group,index,reduceMotion}:{group:CoverGroup;index:number;reduceMotion:boolean}){
+  const delay=.32+index*.08;
+  return <motion.section className={`group-card group-card-${group.accent}`} aria-label={group.label} initial={{opacity:0,y:reduceMotion?0:16}} animate={{opacity:1,y:0}} transition={{duration:reduceMotion?.2:.5,delay}} {...(!reduceMotion&&{whileHover:{y:-4}})}><motion.div className="group-accent-line" initial={{scaleX:reduceMotion?1:0}} animate={{scaleX:1}} transition={{duration:reduceMotion?.2:.55,delay:delay+.1}}/><header><span><Users/></span><h2>{group.label}</h2></header><ul>{group.members.map((member,row)=><motion.li key={member.ci} initial={{opacity:0,y:reduceMotion?0:10}} animate={{opacity:1,y:0}} transition={{duration:reduceMotion?.2:.35,delay:delay+.18+row*.05}}><strong>{member.name}</strong><code>C.I: {member.ci}</code></motion.li>)}</ul></motion.section>
+}
+
+function InstitutionalInfo({cover,reduceMotion}:{cover:CoverContent;reduceMotion:boolean}){
+  return <motion.div className="institutional-info" initial={{opacity:0,y:reduceMotion?0:16}} animate={{opacity:1,y:0}} transition={{duration:reduceMotion?.2:.5,delay:.48}}><div><span>ASIGNATURA</span><strong>{cover.course}</strong></div><div><span>UNIVERSIDAD</span><strong>{cover.university}</strong></div></motion.div>
+}
 
 function InterruptPause(){return <div className="interrupt-pause" role="img" aria-label="Proceso pausado y reanudado por una interrupción"><div className="process-line"><span>P1 · EJECUTANDO</span><motion.div animate={{scaleX:[1,.48,.48,1]}} transition={{duration:4,repeat:Infinity}}/></div><motion.div className="zap-float" animate={{y:[0,18,0],filter:["drop-shadow(0 0 8px var(--amber))","drop-shadow(0 0 25px var(--amber))","drop-shadow(0 0 8px var(--amber))"]}} transition={{duration:2,repeat:Infinity}}><Zap/></motion.div><div className="pause-label">PAUSA <span>→</span> ISR <span>→</span> REANUDA</div></div>}
 function EventCard({icon,title,text,from,to}:{icon:React.ReactNode;title:string;text:string;from:string;to:string}){return <Card><div className="event-icon">{icon}<span>HARDWARE</span></div><h3>{title}</h3><p>{text}</p><div className="state-change"><b>{from}</b><motion.span animate={{x:[0,12,0]}} transition={{duration:1.5,repeat:Infinity}}>→</motion.span><b>{to}</b></div></Card>}
