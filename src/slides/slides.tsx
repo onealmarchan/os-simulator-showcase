@@ -1,5 +1,18 @@
 export type SlideSection = "intro" | "modulo3" | "modulo4" | "cierre";
 
+export type CoverGroup = {
+  id: "module03" | "module04";
+  label: string;
+  accent: "cyan" | "violet";
+  members: { name: string; ci: string }[];
+};
+
+export type CoverContent = {
+  groups: CoverGroup[];
+  course: string;
+  university: string;
+};
+
 export type Slide = {
   id: number;
   section: SlideSection;
@@ -7,10 +20,42 @@ export type Slide = {
   subtitle?: string;
   demo: boolean;
   bullets?: string[];
+  cover?: CoverContent;
 };
 
 export const slides: Slide[] = [
-  { id: 1, section: "intro", title: "Simulador de Sistemas Operativos", subtitle: "Módulo 3: Gestión de CPU · Módulo 4: Interrupciones", demo: false },
+  {
+    id: 1,
+    section: "intro",
+    title: "Simulador de Sistemas Operativos",
+    subtitle: "Módulo 3: Gestión de CPU · Módulo 4: Interrupciones",
+    demo: false,
+    cover: {
+      groups: [
+        {
+          id: "module03",
+          label: "Grupo Módulo 03",
+          accent: "cyan",
+          members: [
+            { name: "Manuel Salazar", ci: "31.278.552" },
+            { name: "Guillermo Rojas", ci: "28.752.317" },
+            { name: "O'Neal Marchan", ci: "30.143.749" },
+          ],
+        },
+        {
+          id: "module04",
+          label: "Grupo Módulo 04",
+          accent: "violet",
+          members: [
+            { name: "Saúl Ramos", ci: "31.156.858" },
+            { name: "Gabriel Bastardo", ci: "31.257.502" },
+          ],
+        },
+      ],
+      course: "Sistemas Operativos",
+      university: 'Universidad Politécnica Territorial del Oeste de Sucre "Clodosbaldo Russián"',
+    },
+  },
   { id: 2, section: "intro", title: "¿Qué veremos?", demo: false },
   { id: 3, section: "modulo3", title: "Módulo 3: Gestión de CPU", subtitle: "Planificación de procesos", demo: true, bullets: ["La CPU ejecuta un proceso a la vez y el planificador decide cuál.", "Objetivo: aprovechar la CPU y reducir los tiempos de espera.", "El simulador compara algoritmos con los mismos procesos."] },
   { id: 4, section: "modulo3", title: "Estados de un proceso", subtitle: "Ciclo de vida dentro del simulador", demo: true },
